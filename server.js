@@ -20,19 +20,20 @@ app.disable('etag');
 app.use(express.static("public"));
 
 
-mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp
-JAWSDB_URL='mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
+// mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp
+let JAWSDB_URL = 'mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
 // mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
-let db = mongoose.connection;
+// let db = mongoose.connection;
+let db = JAWSDB_URL;
 let http = require('http');
 let PORT = process.env.PORT || 3007
 
 db.on("error", function(error) {
-    console.log("Mongoose Error: ", error);
+    console.log("Error: ", error);
 });
 
 db.once("open", function() {
-    console.log("Mongoose connection successful.");
+    console.log("Connection successful.");
 });
 let result = [];
 app.get("/scrape", function(req, res) { 
@@ -57,14 +58,14 @@ app.get("/scrapehomepage", function(req, res){
     request("http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml", function(error, response, html) {
         let $ = cheerio.load(html);
 
-        var mainChildren = $._root.children[2].children[1].children[5].children[1].children;
-        for(var i = 0; i < mainChildren.length; i++){
+        let mainChildren = $._root.children[2].children[1].children[5].children[1].children;
+        for(let i = 0; i < mainChildren.length; i++){
             let item = mainChildren[i];
             if(item.type == "tag" && item.name == "item"){
-                var title = "";
-                var link = "";
+                let title = "";
+                let link = "";
                 let itemComponents = item.children;
-                for(var n = 0; n < itemComponents.length; n++){
+                for(let n = 0; n < itemComponents.length; n++){
                     if(itemComponents[n].type == "tag"){
                         if(itemComponents[n].name == "title"){
                             title = itemComponents[n].children[0].data

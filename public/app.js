@@ -3,7 +3,7 @@ $(document).on("click", "#scrapeB", function() {
     $.getJSON("/scrapehomepage", function(data) {
         // For each one
         $("#articles").html('');
-        for (var i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) {
             $("#articles").append("<div class='item'><p id= " + data[i].id + "><span class='thetitle'>" + data[i].title + "</span><br /><span class='thelink'>" + data[i].link + "</span></p>");
             $("#articles").append('<button class="save" data-link="' + data[i].link + '" data-title="' + data[i].title + '" id= "' + data[i].id + '" > Save </button></div>');
         };
@@ -18,9 +18,9 @@ $.get("/articles", function(data) {
 });
 
 // saved notes
-var clickedID;
-var clickedTitle;
-var clickedLink;
+let clickedID;
+let clickedTitle;
+let clickedLink;
 $(document).on("click", ".save", function() {
     clickedID = (this.id);
     clickedTitle = $(this).data("title");
@@ -28,7 +28,7 @@ $(document).on("click", ".save", function() {
     console.log(clickedTitle);
     console.log(clickedLink);
     $.get("/savednotes", function(data) {
-        var savedData = {};
+        let savedData = {};
         console.log("toSave: " + clickedID);
         console.log("THE ID AT INDEX " + clickedID + ": " + data[clickedID]._id);
         let returnedID = data[clickedID]._id;
