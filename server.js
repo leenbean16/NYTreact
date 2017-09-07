@@ -19,32 +19,10 @@ app.use(bodyParser.urlencoded({
 app.disable('etag');
 app.use(express.static("public"));
 
-// mongoose.connect("mongodb://heroku_8pl7k4vk:j9a7m1l1uvji9uulcbvjenu1nj@ds139899.mlab.com:39899/heroku_8pl7k4vk");
 mongoose.connect('mongodb://localhost/nyt', { useMongoClient: true })
 let db = mongoose.connection;
-
-let http = require('http'); // For serving a basic web page.
-
-// Here we find an appropriate database to connect to, defaulting to
-// localhost if we don't find one.
-// let uristring =
-//     process.env.MONGOLAB_URI ||
-//     process.env.MONGOHQ_URL ||
-//     'mongodb://heroku_8pl7k4vk:j9a7m1l1uvji9uulcbvjenu1nj@ds139899.mlab.com:39899/heroku_8pl7k4vk';
-
-// The http server will listen to an appropriate port, or default to
-// port 3000.
+let http = require('http');
 let PORT = process.env.PORT || 3007;
-
-// Makes connection asynchronously.  Mongoose will queue up database
-// operations and release them when the connection is complete.
-// mongoose.connect(uristring, function(err, res) {
-//     if (err) {
-//         console.log('ERROR connecting to: ' + uristring + '. ' + err);
-//     } else {
-//         console.log('Succeeded connected to: ' + uristring);
-//     }
-// });
 
 db.on("error", function(error) {
     console.log("Mongoose Error: ", error);
@@ -68,10 +46,9 @@ app.get("/scrape", function(req, res) {
             };
             result.push(newArt);
         });
-        console.log("Scraped");
-        console.log(result);
-
+        console.log("Scraped The New York Times.");
         res.send(result);
+        console.log(result);
     });
 });
 
@@ -82,7 +59,6 @@ app.get("/articles", function(req, res) {
             console.log(error);
         } else {
             res.send(doc);
-            console.log(Article);
         }
     });
 });
@@ -115,7 +91,7 @@ app.get("/articles/note/:id", function(req, res) {
 });
 
 
-// find an article
+// // find an article
 app.post("/articles/:id", function(req, res) {
     let newNote = new Note(req.body);
     newNote.save(function(error, doc) {
@@ -130,11 +106,9 @@ app.post("/articles/:id", function(req, res) {
                         res.send(doc);
                     }
                 });
-
         }
     });
 });
-
 
 // saved articles
 app.get("/savednotes", function(req, res) {
@@ -151,8 +125,7 @@ app.get("/savednotes", function(req, res) {
     });
 });
 
-
-app.get("/articles/note/delete/:id" + function(req, res) {
+app.get("/delete/:id" + function(req, res) {
     Note.findByIdAndRemove({ "_id": req.body.id }, function(err, newdoc) {
         if (err) {
             res.send(err);
@@ -162,10 +135,6 @@ app.get("/articles/note/delete/:id" + function(req, res) {
     });
 
 });
-
-// delete note
-
-
 
 // connection
 app.listen(3007, function() {
