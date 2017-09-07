@@ -19,10 +19,10 @@ app.use(bodyParser.urlencoded({
 app.disable('etag');
 app.use(express.static("public"));
 
-mongoose.connect('mongodb://localhost/nyt', { useMongoClient: true })
+mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
 let db = mongoose.connection;
 let http = require('http');
-let PORT = process.env.PORT || 3007;
+let PORT = process.env.PORT || 3007
 
 db.on("error", function(error) {
     console.log("Mongoose Error: ", error);
@@ -32,8 +32,7 @@ db.once("open", function() {
     console.log("Mongoose connection successful.");
 });
 let result = [];
-app.get("/scrape", function(req, res) {
-
+app.get("/scrape", function(req, res) { 
     request("https://www.nytimes.com/", function(error, response, html) {
         let $ = cheerio.load(html);
 
@@ -49,6 +48,38 @@ app.get("/scrape", function(req, res) {
         console.log("Scraped The New York Times.");
         res.send(result);
         console.log(result);
+    });
+});
+app.get("/scrapehomepage", function(req, res){
+    request("http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml", function(error, response, html) {
+        let $ = cheerio.load(html);
+
+        var mainChildren = $._root.children[2].children[1].children[5].children[1].children;
+        for(var i = 0; i < mainChildren.length; i++){
+            let item = mainChildren[i];
+            if(item.type == "tag" && item.name == "item"){
+                var title = "";
+                var link = "";
+                let itemComponents = item.children;
+                for(var n = 0; n < itemComponents.length; n++){
+                    if(itemComponents[n].type == "tag"){
+                        if(itemComponents[n].name == "title"){
+                            title = itemComponents[n].children[0].data
+                        }
+                        if(itemComponents[n].name == "link"){
+                            link = itemComponents[n].next.data;
+                        }
+                    }
+                }
+                let newArt = {
+                    id: i,
+                    title: title,
+                    link: link
+                };
+                result.push(newArt);
+            }
+        }
+        res.send(result);
     });
 });
 
@@ -125,7 +156,7 @@ app.get("/savednotes", function(req, res) {
     });
 });
 
-app.get("/delete/:id" + function(req, res) {
+app.get("/delete/:id", function(req, res) {
     Note.findByIdAndRemove({ "_id": req.body.id }, function(err, newdoc) {
         if (err) {
             res.send(err);

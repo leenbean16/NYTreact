@@ -1,12 +1,15 @@
 $(document).on("click", "#scrapeB", function() {
 
-    $.getJSON("/scrape", function(data) {
+    $.getJSON("/scrapehomepage", function(data) {
         // For each one
+        //console.log("THE DATA: " + JSON.stringify(data));
         $("#articles").html('');
         for (var i = 0; i < 10; i++) {
             // Display the apropos information on the page
-            $("#articles").append("<p id= " + data[i].id + ">" + data[i].title + "<br />" + data[i].link + "</p>");
-            $("#articles").append("<button class=" + "save" + " id= " + data[i].id + ">" + "SAVE" + "</button>");
+            //console.log("THE ID: " + JSON.stringify(data[i]));
+            //console.log("THE LIK: " + data[i].link);
+            $("#articles").append("<div class='item'><p id= " + data[i].id + "><span class='thetitle'>" + data[i].title + "</span><br /><span class='thelink'>" + data[i].link + "</span></p>");
+            $("#articles").append('<button class="save" data-link="' + data[i].link + '" data-title="' + data[i].title + '" id= "' + data[i].id + '" > SAVE </button></div>');
         };
     });
 });
@@ -19,15 +22,28 @@ $.get("/articles", function(data) {
 });
 
 // saved notes
+var clickedID;
+var clickedTitle;
+var clickedLink;
 $(document).on("click", ".save", function() {
+    clickedID = (this.id);
+    //var clickedItem = $(this).parents(".item");
+    //clickedTitle = clickedItem.find("span.thetitle").text();
+    //clickedLink = clickedItem.find("span.thelink").text();
+    clickedTitle = $(this).data("title");
+    clickedLink = $(this).data("link");
+    console.log(clickedTitle);
+    console.log(clickedLink);
     $.get("/savednotes", function(data) {
-        for (let i = 0; i < data.length; i++) {
-            console.log("client saving");
+        //for (let i = 0; i < data.length; i++) {
+            //console.log("client saving" + JSON.stringify(data));
             var savedData = {};
-            var toSave = (this.id);
-            savedData.title = data[toSave].title;
-            savedData.link = data[toSave].link;
-
+            console.log("toSave: " + clickedID);
+            console.log("THE ID AT INDEX " + clickedID + ": " + data[clickedID]._id);
+            let returnedID = data[clickedID]._id;
+            savedData.title = clickedTitle;
+            savedData.link = clickedLink;
+            //savedData.id = data[clickedID]._id;
             $.ajax({
                 method: "POST",
                 url: "/save",
@@ -36,7 +52,7 @@ $(document).on("click", ".save", function() {
                     link: savedData.link,
                 }
             });
-        };
+        //};
     });
 });
 
