@@ -20,20 +20,18 @@ app.disable('etag');
 app.use(express.static("public"));
 
 
-// mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp
-let JAWSDB_URL = 'mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
-// mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
-// let db = mongoose.connection;
-let db = JAWSDB_URL;
+// let JAWSDB_URL = 'mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
+mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
+let db = mongoose.connection;
 let http = require('http');
 let PORT = process.env.PORT || 3007
 
 db.on("error", function(error) {
-    console.log("Error: ", error);
+    console.log("Mongoose Error: ", error);
 });
 
 db.once("open", function() {
-    console.log("Connection successful.");
+    console.log("Mongoose connection successful.");
 });
 let result = [];
 app.get("/scrape", function(req, res) { 
