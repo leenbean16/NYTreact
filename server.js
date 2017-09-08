@@ -23,7 +23,7 @@ app.use(express.static("public"));
 // let JAWSDB_URL = 'mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
 // mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
 mongoose.connect("mongodb://heroku_g9n4kfsw:5tf31qpnk94lchpucs41fvc6df@ds129144.mlab.com:29144/heroku_g9n4kfsw");
-let db = mongoose.connect;
+// let db = mongoose.connect;
 let http = require('http');
 let PORT = process.env.PORT || 3007
 
