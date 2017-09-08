@@ -23,18 +23,10 @@ app.use(express.static("public"));
 // let JAWSDB_URL = 'mysql://tqjqz9puh46oi2je:r2vlfoqf7llnlllx@l6slz5o3eduzatkw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/cpxnrdqyuv7fsjhp'
 // mongoose.connect('mongodb://localhost:27017/nytreact', { useMongoClient: true })
 mongoose.connect("mongodb://heroku_g9n4kfsw:5tf31qpnk94lchpucs41fvc6df@ds129144.mlab.com:29144/heroku_g9n4kfsw");
-mongodb://heroku_g9n4kfsw:5tf31qpnk94lchpucs41fvc6df@ds129144.mlab.com:29144/heroku_g9n4kfsw
-let db = mongoose.connection;
+let db = mongoose.connect;
 let http = require('http');
 let PORT = process.env.PORT || 3007
 
-db.on("error", function(error) {
-    console.log("Mongoose Error: ", error);
-});
-
-db.once("open", function() {
-    console.log("Mongoose connection successful.");
-});
 let result = [];
 app.get("/scrape", function(req, res) { 
     request("https://www.nytimes.com/", function(error, response, html) {
@@ -147,7 +139,6 @@ app.post("/articles/:id", function(req, res) {
 
 // saved articles
 app.get("/savednotes", function(req, res) {
-    db.collection('notes').save(req.body, (err, result) => {
         Note.find({})
             .populate("note")
             .exec(function(error, doc) {
@@ -157,7 +148,6 @@ app.get("/savednotes", function(req, res) {
                     res.send(doc);
                 }
             });
-    });
 });
 
 app.get("/delete/:id", function(req, res) {
